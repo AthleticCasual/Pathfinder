@@ -4,6 +4,19 @@ h1 {
   margin: 40px;
 }
 
+button {
+  margin: 0px 50px 50px 50px;
+  font-size: 22pt;
+}
+
 .grid {
   margin-bottom: 80px;
+}
+
+.visited {
+  background-color: blue;
+}
+
+.path {
+  background-color: magenta;
 }

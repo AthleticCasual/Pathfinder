@@ -1,7 +1,15 @@
 .node {
   outline: 1px solid lightblue;
-  height: 40px;
-  width: 40px;
+  height: 30px;
+  width: 30px;
   display: inline-block;
   margin: 0px;
+}
+
+.node-start, .node-start.visited {
+  background-color: purple;
+}
+
+.node-end, .node-end.visited {
+  background-color: gold;
 }
