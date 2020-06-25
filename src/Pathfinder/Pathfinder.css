@@ -20,3 +20,7 @@ button {
 .path {
   background-color: magenta;
 }
+
+.wall {
+  background-color: grey;
+}

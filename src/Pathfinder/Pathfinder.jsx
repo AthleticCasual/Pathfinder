@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Node from "./Node/Node";
-import {dijkstra} from "../Algorithms/dijkstra";
+import { dijkstra } from "../Algorithms/dijkstra";
 
 import "./Pathfinder.css";
 
@@ -9,7 +9,7 @@ const COLS = 50;
 
 const START_ROW = 10;
 const START_COL = 15;
-const END_ROW = 3;
+const END_ROW = 10;
 const END_COL = 35;
 
 export default class Pathfinder extends Component {
@@ -17,12 +17,14 @@ export default class Pathfinder extends Component {
     super(props);
     this.state = {
       grid: [],
+      mousePressed: false,
+      reset: false,
     };
   }
 
   componentDidMount() {
     let grid = this.getInitialGrid();
-    this.setState({grid});
+    this.setState({ grid });
   }
 
   createNode(row, col) {
@@ -33,7 +35,8 @@ export default class Pathfinder extends Component {
       isEnd: row === END_ROW && col === END_COL,
       isVisited: false,
       distance: Infinity,
-      prevNode: null
+      prevNode: null,
+      isWall: false,
     };
     return node;
   }
@@ -54,50 +57,128 @@ export default class Pathfinder extends Component {
     return node.row + "," + node.col;
   }
 
-  async animateVisited(visited) {
-    for (let i = 0; i < visited.length; i++) {
-      setTimeout(function () {
-        let id = visited[i].row + "," + visited[i].col;
-        document.getElementById(id).classList.add("visited");
-      }, 15 * i);
-      // if (i === visited.length - 1) {
-      //   let node = visited[visited.length - 1];
-      //   while (node.prevNode !== null) {
-      //     setTimeout(function(node, i) {
-      //       let id = node.row + "," + node.col;
-      //       document.getElementById(id).classList.add("path");
-      //       node = node.prevNode;
-      //       i--;
-      //     }, 10 * i);
-      //   }
-      // }
+  animatePath(pathInOrder) {
+    for (let i = 0; i <= pathInOrder.length; i++) {
+      if (i === pathInOrder.length) {
+        setTimeout(() => {
+          document.getElementById("reset-btn").disabled = false;
+        }, 25 * i);
+      } else {
+        setTimeout(() => {
+          document.getElementById(pathInOrder[i]).classList.add("path");
+        }, 25 * i);
+      }
     }
   }
 
+  animateVisited(visited, pathInOrder) {
+    for (let i = 0; i <= visited.length; i++) {
+      if (i === visited.length) {
+        setTimeout(() => {
+          this.animatePath(pathInOrder);
+        }, 5 * i);
+      } else {
+        setTimeout(function () {
+          let id = visited[i].row + "," + visited[i].col;
+          document.getElementById(id).classList.add("visited");
+        }, 5 * i);
+      }
+    }
+  }
 
-
-  async visualizeDijkstra() {
-    let {grid} = this.state;
+  visualizeDijkstra() {
+    document.getElementById("dijkstra-btn").disabled = true;
+    document.getElementById("random-btn").disabled = true;
+    document.getElementById("reset-btn").disabled = true;
+    let { grid } = this.state;
     let start = grid[START_ROW][START_COL];
     let end = grid[END_ROW][END_COL];
     let visited = dijkstra(grid, start, end);
-    await this.animateVisited(visited);
     let node = visited[visited.length - 1];
-    while (node.prevNode !== null) {
-      let id = node.row + "," + node.col;
-      document.getElementById(id).classList.add("path");
-      node = node.prevNode;
+    let pathInOrder = [];
+    if (node === grid[END_ROW][END_COL]) {
+      while (node.prevNode !== null) {
+        let id = node.row + "," + node.col;
+        pathInOrder.push(id);
+        node = node.prevNode;
+      }
+    }
+    this.animateVisited(visited, pathInOrder);
+  }
+
+  mouseDown(row, col) {
+    let newGrid = this.state.grid;
+    let node = newGrid[row][col];
+    if (!node.isStart && !node.isEnd) {
+      newGrid[row][col].isWall = !newGrid[row][col].isWall;
+      let gridNode = document.getElementById(row + "," + col);
+      gridNode.classList.toggle("wall");
+      this.setState({ grid: newGrid });
+      this.setState({ mousePressed: true });
     }
   }
 
+  mouseEnter(row, col) {
+    let newGrid = this.state.grid;
+    let node = newGrid[row][col];
+    if (this.state.mousePressed && !node.isStart && !node.isEnd) {
+      newGrid[row][col].isWall = true;
+      let gridNode = document.getElementById(row + "," + col);
+      gridNode.classList.add("wall");
+      this.setState({ grid: newGrid });
+    }
+  }
+
+  mouseUp() {
+    this.setState({ mousePressed: false });
+  }
+
+  randomPattern() {
+    document.getElementById("random-btn").disabled = true;
+    let randomGrid = this.state.grid;
+    for (let row of randomGrid) {
+      for (let node of row) {
+        let num = Math.floor(Math.random() * Math.floor(3));
+        if (num === 0 && !node.isStart && !node.isEnd) {
+          node.isWall = true;
+          document.getElementById(node.row + "," + node.col).classList.add("wall");
+        }
+      }
+    }
+    this.setState({ grid: randomGrid });
+  }
+
+  resetGrid() {
+    let grid = this.state.grid;
+    for (let row of grid) {
+      for (let node of row) {
+        let currentNode = document.getElementById(node.row + "," + node.col);
+        currentNode.classList.remove("visited");
+        currentNode.classList.remove("path");
+        currentNode.classList.remove("wall");
+      }
+    }
+    this.setState({ grid: this.getInitialGrid() });
+    document.getElementById("dijkstra-btn").disabled = false;
+    document.getElementById("random-btn").disabled = false;
+  }
+
   render() {
-    let {grid} = this.state;
+    let { grid } = this.state;
 
     return (
       <main>
         <h1>Pathfinder Visualizer</h1>
-        <button onClick={() => this.visualizeDijkstra()}>Visualize Dijkstra's</button>
-        <div className="grid">
+        <button id="dijkstra-btn" onClick={() => this.visualizeDijkstra()}>
+          Visualize Dijkstra's
+        </button>
+        <button id="reset-btn" onClick={() => this.resetGrid()}>
+          Reset
+        </button>
+        <button id="random-btn" onClick={() => this.randomPattern()}>
+          Random Pattern
+        </button>
+        <div id="grid" className="grid">
           {grid.map((row, index) => {
             return (
               <div key={index}>
@@ -109,6 +190,11 @@ export default class Pathfinder extends Component {
                       col={node.col}
                       isStart={node.isStart}
                       isEnd={node.isEnd}
+                      isWall={node.isWall}
+                      mousePressed={this.state.mousePressed}
+                      onMouseDown={(row, col) => this.mouseDown(row, col)}
+                      onMouseEnter={(row, col) => this.mouseEnter(row, col)}
+                      onMouseUp={() => this.mouseUp()}
                     ></Node>
                   );
                 })}

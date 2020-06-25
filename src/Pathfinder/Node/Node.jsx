@@ -9,17 +9,21 @@ export default class Node extends Component {
       row: props.row,
       col: props.col,
       isStart: props.isStart,
-      isEnd: props.isEnd
+      isEnd: props.isEnd,
+      isWall: props.isWall,
     };
   }
 
   getClass() {
     if (this.state.isStart) {
-      return "node node-start";
+      return "node-start";
     } else if (this.state.isEnd) {
-      return "node node-end";
+      return "node-end";
+    } else if (this.state.isWall) {
+      console.log("yay we got a wall");
+      return "node-wall";
     } else {
-      return "node";
+      return "";
     }
   }
 
@@ -28,6 +32,15 @@ export default class Node extends Component {
   }
 
   render() {
-    return <div id={this.getId()} className={this.getClass()}></div>;
+    let { row, col } = this.state;
+    return (
+      <div
+        id={this.getId()}
+        className={"node " + this.getClass()}
+        onMouseDown={() => this.props.onMouseDown(row, col)}
+        onMouseEnter={() => this.props.onMouseEnter(row, col)}
+        onMouseUp={() => this.props.onMouseUp()}
+      ></div>
+    );
   }
 }

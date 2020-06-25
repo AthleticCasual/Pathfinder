@@ -6,10 +6,16 @@
   margin: 0px;
 }
 
-.node-start, .node-start.visited {
+.node-start,
+.node-start.visited {
   background-color: purple;
 }
 
-.node-end, .node-end.visited {
+.node-end,
+.node-end.visited {
   background-color: gold;
+}
+
+.node-wall {
+  background-color: black;
 }

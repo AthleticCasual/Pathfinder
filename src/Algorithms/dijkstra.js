@@ -7,16 +7,22 @@ export function dijkstra(grid, start, end) {
   start.distance = 0;
   let visited = [];
   while (!!unvisited.length) {
-    unvisited.sort(function(nodeA, nodeB){return nodeA.distance - nodeB.distance});
+    unvisited.sort(function (nodeA, nodeB) {
+      return nodeA.distance - nodeB.distance;
+    });
     let currentNode = unvisited.shift();
+    if (currentNode.isWall) {
+      continue;
+    }
+    if (currentNode.distance === Infinity) {
+      return visited;
+    }
     currentNode.isVisited = true;
     visited.push(currentNode);
-    updateNeighbors(grid, currentNode);
     if (currentNode === end) {
       return visited;
-    } else if (currentNode.distance === Infinity) {
-      return visited
     }
+    updateNeighbors(grid, currentNode);
   }
   return visited;
 }
@@ -45,7 +51,7 @@ function getNeighbors(grid, node) {
   if (col < grid[0].length - 1) {
     neighbors.push(grid[row][col + 1]);
   }
-  return neighbors.filter(neighbor => !neighbor.isVisited);
+  return neighbors.filter((neighbor) => !neighbor.isVisited);
 }
 
 function getAllNodes(grid) {
