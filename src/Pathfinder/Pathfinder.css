@@ -7,20 +7,18 @@ h1 {
 button {
   margin: 0px 50px 50px 50px;
   font-size: 22pt;
+  color: white;
+  background-color: purple;
+  padding: 15px;
+  border-radius: 25px;
+}
+
+p {
+  font-size: 32pt;
+  color: purple;
+  margin: 30px;
 }
 
 .grid {
   margin-bottom: 80px;
-}
-
-.visited {
-  background-color: blue;
-}
-
-.path {
-  background-color: magenta;
-}
-
-.wall {
-  background-color: grey;
 }

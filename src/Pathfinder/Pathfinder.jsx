@@ -8,9 +8,9 @@ const ROWS = 20;
 const COLS = 50;
 
 const START_ROW = 10;
-const START_COL = 15;
+const START_COL = 10;
 const END_ROW = 10;
-const END_COL = 35;
+const END_COL = 39;
 
 export default class Pathfinder extends Component {
   constructor(props) {
@@ -18,6 +18,8 @@ export default class Pathfinder extends Component {
     this.state = {
       grid: [],
       mousePressed: false,
+      startPressed: false,
+      endPressed: false,
       reset: false,
     };
   }
@@ -74,14 +76,17 @@ export default class Pathfinder extends Component {
   animateVisited(visited, pathInOrder) {
     for (let i = 0; i <= visited.length; i++) {
       if (i === visited.length) {
+        if (!visited[i - 1].isEnd) {
+          document.getElementById("message").textContent = "No Path Found";
+        }
         setTimeout(() => {
           this.animatePath(pathInOrder);
-        }, 5 * i);
+        }, 15 * i);
       } else {
         setTimeout(function () {
           let id = visited[i].row + "," + visited[i].col;
           document.getElementById(id).classList.add("visited");
-        }, 5 * i);
+        }, 15 * i);
       }
     }
   }
@@ -110,27 +115,50 @@ export default class Pathfinder extends Component {
     let newGrid = this.state.grid;
     let node = newGrid[row][col];
     if (!node.isStart && !node.isEnd) {
-      newGrid[row][col].isWall = !newGrid[row][col].isWall;
+      node.isWall = !node.isWall;
       let gridNode = document.getElementById(row + "," + col);
-      gridNode.classList.toggle("wall");
+      gridNode.classList.toggle("node-wall");
       this.setState({ grid: newGrid });
-      this.setState({ mousePressed: true });
+      // } else if (node.isStart) {
+      //   this.setState({ startPressed: true });
+      // } else if (node.isEnd) {
+      //   this.setState({ endPressed: true });
     }
+    this.setState({ mousePressed: true });
+  }
+
+  mouseLeave(row, col) {
+    let newGrid = this.state.grid;
+    // let node = newGrid[row][col];
+    // if (this.state.mousePressed) {
+    //   if (node.isStart) {
+    //     node.isStart = false;
+    //   } else if (node.isEnd) {
+    //     node.isEnd = false;
+    //   }
+    // }
+    this.setState({ grid: newGrid });
   }
 
   mouseEnter(row, col) {
     let newGrid = this.state.grid;
     let node = newGrid[row][col];
-    if (this.state.mousePressed && !node.isStart && !node.isEnd) {
-      newGrid[row][col].isWall = true;
-      let gridNode = document.getElementById(row + "," + col);
-      gridNode.classList.add("wall");
-      this.setState({ grid: newGrid });
+    if (this.state.mousePressed) {
+      if (!node.isStart && !node.isEnd && !this.state.startPressed && !this.state.endPressed) {
+        node.isWall = true;
+        let gridNode = document.getElementById(row + "," + col);
+        gridNode.classList.add("node-wall");
+        this.setState({ grid: newGrid });
+        // } else if (this.state.startPressed) {
+        //   node.isStart = true;
+        // } else if (this.state.endPressed) {
+        //   node.isEnd = true;
+      }
     }
   }
 
   mouseUp() {
-    this.setState({ mousePressed: false });
+    this.setState({ mousePressed: false, startPressed: false, endPressed: false });
   }
 
   randomPattern() {
@@ -141,7 +169,7 @@ export default class Pathfinder extends Component {
         let num = Math.floor(Math.random() * Math.floor(3));
         if (num === 0 && !node.isStart && !node.isEnd) {
           node.isWall = true;
-          document.getElementById(node.row + "," + node.col).classList.add("wall");
+          document.getElementById(node.row + "," + node.col).classList.add("node-wall");
         }
       }
     }
@@ -155,12 +183,13 @@ export default class Pathfinder extends Component {
         let currentNode = document.getElementById(node.row + "," + node.col);
         currentNode.classList.remove("visited");
         currentNode.classList.remove("path");
-        currentNode.classList.remove("wall");
+        currentNode.classList.remove("node-wall");
       }
     }
     this.setState({ grid: this.getInitialGrid() });
     document.getElementById("dijkstra-btn").disabled = false;
     document.getElementById("random-btn").disabled = false;
+    document.getElementById("message").textContent = "";
   }
 
   render() {
@@ -169,13 +198,14 @@ export default class Pathfinder extends Component {
     return (
       <main>
         <h1>Pathfinder Visualizer</h1>
-        <button id="dijkstra-btn" onClick={() => this.visualizeDijkstra()}>
+        <p id="message"></p>
+        <button id="dijkstra-btn" class="button" onClick={() => this.visualizeDijkstra()}>
           Visualize Dijkstra's
         </button>
-        <button id="reset-btn" onClick={() => this.resetGrid()}>
+        <button id="reset-btn" class="button" onClick={() => this.resetGrid()}>
           Reset
         </button>
-        <button id="random-btn" onClick={() => this.randomPattern()}>
+        <button id="random-btn" class="button" onClick={() => this.randomPattern()}>
           Random Pattern
         </button>
         <div id="grid" className="grid">
@@ -193,6 +223,7 @@ export default class Pathfinder extends Component {
                       isWall={node.isWall}
                       mousePressed={this.state.mousePressed}
                       onMouseDown={(row, col) => this.mouseDown(row, col)}
+                      onMouseLeave={(row, col) => this.mouseLeave(row, col)}
                       onMouseEnter={(row, col) => this.mouseEnter(row, col)}
                       onMouseUp={() => this.mouseUp()}
                     ></Node>

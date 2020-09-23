@@ -20,7 +20,6 @@ export default class Node extends Component {
     } else if (this.state.isEnd) {
       return "node-end";
     } else if (this.state.isWall) {
-      console.log("yay we got a wall");
       return "node-wall";
     } else {
       return "";
@@ -33,11 +32,32 @@ export default class Node extends Component {
 
   render() {
     let { row, col } = this.state;
+    // let className = () => {
+    //   if (this.state.isStart) {
+    //     return "node-start";
+    //   } else if (this.state.isEnd) {
+    //     return "node-end";
+    //   } else if (this.state.isWall) {
+    //     return "node-wall";
+    //   } else {
+    //     return "";
+    //   }
+    // };
+
+    let className = this.state.isEnd
+      ? "node-end"
+      : this.state.isStart
+      ? "node-start"
+      : this.state.isWall
+      ? "node-wall"
+      : "";
+
     return (
       <div
         id={this.getId()}
-        className={"node " + this.getClass()}
+        className={`node ${className}`}
         onMouseDown={() => this.props.onMouseDown(row, col)}
+        onMouseLeave={() => this.props.onMouseLeave(row, col)}
         onMouseEnter={() => this.props.onMouseEnter(row, col)}
         onMouseUp={() => this.props.onMouseUp()}
       ></div>
