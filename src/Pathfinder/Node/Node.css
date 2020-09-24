@@ -7,18 +7,6 @@
   margin: 0px;
 }
 
-.node-start,
-.node-start.visited,
-.node-start.path {
-  background-color: purple;
-}
-
-.node-end,
-.node-end.visited,
-.node-end.path {
-  background-color: gold;
-}
-
 .node-wall {
   animation-name: wallAnimation;
   animation-duration: 0.2s;
@@ -107,4 +95,18 @@
     transform: scale(1);
     background-color: lightgreen;
   }
+}
+
+.node-start,
+.node-start.visited,
+.node-start.path,
+#grid .node-start {
+  background-color: purple !important;
+}
+
+.node-end,
+.node-end.visited,
+.node-end.path,
+#grid .node-end {
+  background-color: gold !important;
 }
