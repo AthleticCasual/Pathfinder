@@ -13,6 +13,16 @@ button {
   border-radius: 25px;
 }
 
+button:hover {
+  background-color: white;
+  color: black;
+  transition: all 0.4s;
+}
+
+button:disabled {
+  opacity: 0.5;
+}
+
 p {
   font-size: 32pt;
   color: purple;
