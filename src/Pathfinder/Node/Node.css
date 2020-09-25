@@ -1,10 +1,11 @@
 .node {
   outline: 1px solid lightblue;
   background-color: white;
-  height: 30px;
-  width: 30px;
+  height: 25px;
+  width: 25px;
   display: inline-block;
   margin: 0px;
+  padding: 0px;
 }
 
 .node-wall {

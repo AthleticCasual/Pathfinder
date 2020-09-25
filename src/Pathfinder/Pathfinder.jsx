@@ -18,8 +18,6 @@ export default class Pathfinder extends Component {
     this.state = {
       grid: [],
       mousePressed: false,
-      startPressed: false,
-      endPressed: false,
       reset: false,
     };
   }
@@ -112,6 +110,7 @@ export default class Pathfinder extends Component {
   }
 
   mouseDown(row, col) {
+    this.setState({ mousePressed: true });
     let newGrid = this.state.grid;
     let node = newGrid[row][col];
     if (!node.isStart && !node.isEnd) {
@@ -119,46 +118,22 @@ export default class Pathfinder extends Component {
       let gridNode = document.getElementById(row + "," + col);
       gridNode.classList.toggle("node-wall");
       this.setState({ grid: newGrid });
-      // } else if (node.isStart) {
-      //   this.setState({ startPressed: true });
-      // } else if (node.isEnd) {
-      //   this.setState({ endPressed: true });
     }
-    this.setState({ mousePressed: true });
-  }
-
-  mouseLeave(row, col) {
-    let newGrid = this.state.grid;
-    // let node = newGrid[row][col];
-    // if (this.state.mousePressed) {
-    //   if (node.isStart) {
-    //     node.isStart = false;
-    //   } else if (node.isEnd) {
-    //     node.isEnd = false;
-    //   }
-    // }
-    this.setState({ grid: newGrid });
   }
 
   mouseEnter(row, col) {
     let newGrid = this.state.grid;
     let node = newGrid[row][col];
-    if (this.state.mousePressed) {
-      if (!node.isStart && !node.isEnd && !this.state.startPressed && !this.state.endPressed) {
-        node.isWall = true;
-        let gridNode = document.getElementById(row + "," + col);
-        gridNode.classList.add("node-wall");
-        this.setState({ grid: newGrid });
-        // } else if (this.state.startPressed) {
-        //   node.isStart = true;
-        // } else if (this.state.endPressed) {
-        //   node.isEnd = true;
-      }
+    if (this.state.mousePressed && !node.isStart && !node.isEnd) {
+      node.isWall = true;
+      let gridNode = document.getElementById(row + "," + col);
+      gridNode.classList.add("node-wall");
+      this.setState({ grid: newGrid });
     }
   }
 
   mouseUp() {
-    this.setState({ mousePressed: false, startPressed: false, endPressed: false });
+    this.setState({ mousePressed: false });
   }
 
   randomPattern() {
@@ -223,7 +198,6 @@ export default class Pathfinder extends Component {
                       isWall={node.isWall}
                       mousePressed={this.state.mousePressed}
                       onMouseDown={(row, col) => this.mouseDown(row, col)}
-                      onMouseLeave={(row, col) => this.mouseLeave(row, col)}
                       onMouseEnter={(row, col) => this.mouseEnter(row, col)}
                       onMouseUp={() => this.mouseUp()}
                     ></Node>

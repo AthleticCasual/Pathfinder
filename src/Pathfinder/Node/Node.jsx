@@ -57,7 +57,6 @@ export default class Node extends Component {
         id={this.getId()}
         className={`node ${className}`}
         onMouseDown={() => this.props.onMouseDown(row, col)}
-        onMouseLeave={() => this.props.onMouseLeave(row, col)}
         onMouseEnter={() => this.props.onMouseEnter(row, col)}
         onMouseUp={() => this.props.onMouseUp()}
       ></div>
