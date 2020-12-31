@@ -14,8 +14,8 @@ button {
 }
 
 button:hover {
-  background-color: white;
-  color: black;
+  background-color: gold;
+  color: purple;
   transition: all 0.4s;
 }
 
