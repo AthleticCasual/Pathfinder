@@ -111,7 +111,6 @@ export default class Pathfinder extends Component {
 
   mouseDown(row, col) {
     this.setState({ mousePressed: true });
-    console.log("MOUSE IS DEFINITELY DOWN");
     let newGrid = this.state.grid;
     let node = newGrid[row][col];
     if (!node.isStart && !node.isEnd) {
@@ -124,10 +123,9 @@ export default class Pathfinder extends Component {
 
   mouseEnter(row, col) {
     if (this.state.mousePressed) {
-      console.log("MOUSE STILL BE PRESSED");
       let newGrid = this.state.grid;
       let node = newGrid[row][col];
-      if (this.state.mousePressed && !node.isStart && !node.isEnd) {
+      if (!node.isStart && !node.isEnd) {
         node.isWall = true;
         let gridNode = document.getElementById(row + "," + col);
         gridNode.classList.add("node-wall");
@@ -138,10 +136,10 @@ export default class Pathfinder extends Component {
 
   mouseUp() {
     this.setState({ mousePressed: false });
-    console.log("MOUSE IS DEFINITELY UP NOW");
   }
 
   randomPattern() {
+    this.resetGrid();
     document.getElementById("random-btn").disabled = true;
     let randomGrid = this.state.grid;
     for (let row of randomGrid) {
@@ -191,7 +189,7 @@ export default class Pathfinder extends Component {
         <div id="grid" className="grid">
           {grid.map((row, index) => {
             return (
-              <div key={index}>
+              <div key={index} class="row">
                 {row.map((node, index) => {
                   return (
                     <Node

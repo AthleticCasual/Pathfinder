@@ -32,3 +32,10 @@ p {
 .grid {
   margin-bottom: 80px;
 }
+
+.row {
+  margin: 0px;
+  border: 0px;
+  padding: 0px;
+  font-size: 0;
+}
